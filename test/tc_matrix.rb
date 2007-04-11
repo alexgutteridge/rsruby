@@ -18,6 +18,7 @@ class TestMatrix < Test::Unit::TestCase
     r.matrix.autoconvert(RSRuby::NO_CONVERSION)
     m = r.matrix([1,2,3,4], :ncol => 2, :nrow => 2)
     assert r.is_matrix(m)
+    #
     assert false
   end
 end
