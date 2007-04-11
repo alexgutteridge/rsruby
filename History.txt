@@ -1,0 +1,5 @@
+= 0.4.2 2007-01-09
+
+* Several bugs in the conversion system are fixed
+* The test suite was expanded and tidied
+* Using Hoe for package management
