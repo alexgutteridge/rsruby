@@ -80,18 +80,18 @@ class RSRuby
     @@proc_table  = {}
 
     #Setup R object cache
-    @@cache = {}
-    @@cache['get'] = self.get_fun('get')
+    @cache = {}
+    @cache['get'] = self.get_fun('get')
 
     #Get constants
-    @@cache['TRUE']  = self.__getitem__('T')
-    @@cache['FALSE'] = self.__getitem__('F')
-    @@cache['NA']    = self.eval_R('NA')
-    # @@cache['NAN']   = self.eval_R('as.double(NA)')
-    @@cache['NaN']   = self.eval_R('NaN')
+    @cache['TRUE']  = self.__getitem__('T')
+    @cache['FALSE'] = self.__getitem__('F')
+    @cache['NA']    = self.eval_R('NA')
+    # @cache['NAN']   = self.eval_R('as.double(NA)')
+    @cache['NaN']   = self.eval_R('NaN')
     
     #help!
-    @@cache['helpfun'] = self.with_mode(NO_CONVERSION, self.__getitem__('help'))
+    @cache['helpfun'] = self.with_mode(NO_CONVERSION, self.__getitem__('help'))
 
     #Catch errors
     self.eval_R("options(error=expression(NULL))")
@@ -259,19 +259,19 @@ class RSRuby
 
   #Wraps the R help function.
   def help(*args)
-    helpobj = @@cache['helpfun'].call(args)
+    helpobj = @cache['helpfun'].call(args)
     self.print(helpobj)
   end
 
   def __getitem__(name)
 
     #Find the identifier and cache (unless already cached)
-    unless @@cache.has_key?(name)
-      @@cache[name] = @@cache['get'].lcall([['',name]])
+    unless @cache.has_key?(name)
+      @cache[name] = @cache['get'].lcall([['',name]])
     end
 
     #Retrieve object from cache
-    robj = @@cache[name]
+    robj = @cache[name]
 
     return robj
 
