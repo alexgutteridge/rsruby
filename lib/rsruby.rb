@@ -66,15 +66,13 @@ class RSRuby
   NO_CONVERSION = 0
   NO_DEFAULT = -1
 
-  alias c_initialize initialize
-
   #Create a new RSRuby interpreter instance. The Singleton design pattern
   #ensures that only one instance can be running in a script. Further
   #calls to RSRuby.instance will return the original instance.
   def initialize()
 
-    #Initialize in C
-    c_initialize
+    #Initialize R
+    r_init
 
     @@default_mode = NO_DEFAULT
 

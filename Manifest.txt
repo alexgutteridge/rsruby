@@ -27,6 +27,7 @@ test/tc_extensions.rb
 test/tc_init.rb
 test/tc_io.rb
 test/tc_library.rb
+test/tc_matrix.rb
 test/tc_modes.rb
 test/tc_robj.rb
 test/tc_sigint.rb
