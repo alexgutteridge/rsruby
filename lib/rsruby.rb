@@ -66,6 +66,8 @@ class RSRuby
   NO_CONVERSION = 0
   NO_DEFAULT = -1
 
+  attr_accessor :proc_table, :class_table, :default_mode
+
   #Create a new RSRuby interpreter instance. The Singleton design pattern
   #ensures that only one instance can be running in a script. Further
   #calls to RSRuby.instance will return the original instance.
@@ -74,29 +76,33 @@ class RSRuby
     #Initialize R
     r_init
 
-    @@default_mode = NO_DEFAULT
+    @default_mode = NO_DEFAULT
 
-    @@class_table = {}
-    @@proc_table  = {}
+    @class_table = {}
+    @proc_table  = {}
 
     #Setup R object cache
     @cache = {}
     @cache['get'] = self.get_fun('get')
 
     #Get constants
-    @cache['TRUE']  = self.__getitem__('T')
-    @cache['FALSE'] = self.__getitem__('F')
-    @cache['NA']    = self.eval_R('NA')
+    @cache['TRUE']  = self.__getitem__('T',true)
+    @cache['FALSE'] = self.__getitem__('F',true)
+
+    @cache['parse'] = self.__getitem__('parse',true)
+    @cache['eval']  = self.__getitem__('eval',true)
+
+    @cache['NA']    = self.__init_eval_R__('NA')
+    @cache['NaN']   = self.__init_eval_R__('NaN')
     # @cache['NAN']   = self.eval_R('as.double(NA)')
-    @cache['NaN']   = self.eval_R('NaN')
     
     #help!
-    @cache['helpfun'] = self.with_mode(NO_CONVERSION, self.__getitem__('help'))
+    @cache['helpfun'] = self.with_mode(NO_CONVERSION, self.__getitem__('help',true))
 
     #Catch errors
-    self.eval_R("options(error=expression(NULL))")
+    self.__init_eval_R__("options(error=expression(NULL))")
     #disable errors
-    self.options('show.error.messages' => false)
+    self.__init_eval_R__("options(show.error.messages=F)")
 
   end
 
@@ -191,15 +197,17 @@ class RSRuby
 
   #Sets the default conversion mode for RSRuby. The constants defined
   #in #RSRuby should be used
+  #DEPRECATED: Use the accessor instead
   def RSRuby.set_default_mode(m)
     if m < -1 or m > TOP_CONVERSION
       raise ArgumentError, "Invalid mode requested"
     end
-    @@default_mode = m
+    RSRuby.instance.default_mode = m
   end
   #Returns the current default conversion mode as an Integer.
+  #DEPRECATED: Use the accessor on the RSRuby instance isntead
   def RSRuby.get_default_mode
-    @@default_mode
+    RSRuby.instance.default_mode
   end
 
   #TODO - not implemented
@@ -232,30 +240,11 @@ class RSRuby
     @@rsruby_showfiles
   end
 
-  #Returns the current class table Hash for RSRuby.
-  def class_table
-    @@class_table
-  end
-
-  #Sets the RSRuby class table Hash.
-  def class_table=(h)
-    @@class_table = h
-  end
-
-  #Returns the current proc table Hash for RSRuby.  
-  def proc_table
-    @@proc_table
-  end
-
-  #Sets the RSRuby proc table Hash.  
-  def proc_table=(h)
-    @@proc_table = h
-  end
-
   #Evaluates the given string in R. Returns the result of the evaluation.
   def eval_R(s)
     self.eval(self.parse(:text => s))
   end
+
 
   #Wraps the R help function.
   def help(*args)
@@ -263,11 +252,21 @@ class RSRuby
     self.print(helpobj)
   end
 
-  def __getitem__(name)
+
+  def __init_eval_R__(s)
+    parsed = self.parse.__init_lcall__([['text',s]])
+    self.eval.__init_lcall__([['',parsed]])
+  end
+
+  def __getitem__(name,init=false)
 
     #Find the identifier and cache (unless already cached)
     unless @cache.has_key?(name)
-      @cache[name] = @cache['get'].lcall([['',name]])
+      if init
+        @cache[name] = @cache['get'].__init_lcall__([['',name]])
+      else
+        @cache[name] = @cache['get'].lcall([['',name]])
+      end
     end
 
     #Retrieve object from cache

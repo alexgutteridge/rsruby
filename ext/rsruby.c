@@ -164,6 +164,7 @@ void Init_rsruby(){
   //Add the lcall method to RObj
   cRObj  = rb_const_get(rb_cObject,rb_intern("RObj"));
   rb_define_method(cRObj, "lcall", RObj_lcall, 1);
+  rb_define_method(cRObj, "__init_lcall__", RObj_init_lcall, 1);  
   rb_define_method(cRObj, "to_ruby", RObj_to_ruby, -2);
 
 }

@@ -70,9 +70,7 @@ VALUE RObj_lcall(VALUE self, VALUE args){
     return Qnil;
   }
 
-  default_mode = NUM2INT(rb_cvar_get(rb_const_get(rb_cObject, 
-						  rb_intern("RSRuby")),
-				     rb_intern("@@default_mode")));
+  default_mode = NUM2INT(rb_iv_get(RSRUBY,"@default_mode"));
 
   // Convert
   if (default_mode < 0){
@@ -82,6 +80,45 @@ VALUE RObj_lcall(VALUE self, VALUE args){
   }
 
   obj = to_ruby_with_mode(res, conv);
+
+  UNPROTECT(2);
+
+  return obj;
+}
+
+
+//lcall method that is safe to call during RSRuby initialisation
+VALUE RObj_init_lcall(VALUE self, VALUE args){
+  SEXP  exp, e, res;
+  SEXP  r_obj;
+  VALUE obj;
+
+  //Ensure we have an array
+  args = rb_check_array_type(args);
+
+  // A SEXP with the function to call and the arguments
+  PROTECT(exp = allocVector(LANGSXP, (RARRAY(args)->len)+1));
+  e = exp;
+
+  Data_Get_Struct(self, struct SEXPREC, r_obj);
+
+  SETCAR(e, r_obj);
+  e = CDR(e);
+
+  // Add the arguments to the SEXP
+  if (!make_argl(args, &e)) {
+    UNPROTECT(1);
+    return Qnil;
+  }
+
+  // Evaluate
+  PROTECT(res = do_eval_expr(exp));
+  if (!res) {
+    UNPROTECT(2);
+    return Qnil;
+  }
+
+  obj = to_ruby_with_mode(res, BASIC_CONVERSION);
 
   UNPROTECT(2);
 
@@ -145,9 +182,7 @@ VALUE RObj_to_ruby(VALUE self, VALUE args){
   }
 
   if (RARRAY(args)->len == 0){
-    conv = NUM2INT(rb_cvar_get(rb_const_get(rb_cObject, 
-					    rb_intern("RSRuby")),
-			       rb_intern("@@default_mode")));
+    conv = NUM2INT(rb_iv_get(RSRUBY,"@default_mode"));
   } else {
     conv = NUM2INT(rb_ary_entry(args,0));
   }

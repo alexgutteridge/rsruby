@@ -55,6 +55,8 @@
 
 #define TOP_MODE 4
 
+#define RSRUBY rb_funcall(rb_const_get(rb_cObject,rb_intern("RSRuby")),rb_intern("instance"),0)
+
 /* Missing definitions from Rinterface.h or RStartup.h */
 # define CleanEd Rf_CleanEd
 extern int Rf_initEmbeddedR(int argc, char **argv);
@@ -76,6 +78,7 @@ VALUE get_fun(VALUE self, VALUE name);
 VALUE rr_init(VALUE self);
 
 VALUE RObj_lcall(VALUE self, VALUE args);
+VALUE RObj_init_lcall(VALUE self, VALUE args);
 VALUE RObj_to_ruby(VALUE self, VALUE args);
 int make_argl(VALUE args, SEXP *e);
 #endif

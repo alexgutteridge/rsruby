@@ -427,9 +427,7 @@ from_proc_table(SEXP robj, VALUE *fun)
   VALUE args[2];
   int i, l, error;
 
-  proc_table = rb_cvar_get(rb_const_get(rb_cObject, 
-					rb_intern("RSRuby")),
-			   rb_intern("@@proc_table"));
+  proc_table = rb_iv_get(RSRUBY,"@proc_table");
 
   proc  = Qnil;
 
@@ -451,13 +449,10 @@ from_proc_table(SEXP robj, VALUE *fun)
   for (i=0; i<l; i++) {
     proc = rb_ary_entry(procs, i);
 
-    mode = rb_cvar_get(rb_const_get(rb_cObject, 
-				    rb_intern("RSRuby")),
-		       rb_intern("@@default_mode"));
-    rb_cvar_set(rb_const_get(rb_cObject, 
-			     rb_intern("RSRuby")),
-		rb_intern("@@default_mode"),
-		INT2FIX(BASIC_CONVERSION),Qtrue);
+    mode = rb_iv_get(RSRUBY,"@default_mode");
+    rb_iv_set(RSRUBY,
+	      "@default_mode",
+	      INT2FIX(BASIC_CONVERSION));
 
     //New safe code
     args[0] = proc;
@@ -480,10 +475,9 @@ VALUE call_proc(VALUE data){
 
 VALUE reset_mode(VALUE mode){
 
-  rb_cvar_set(rb_const_get(rb_cObject, 
-			   rb_intern("RSRuby")),
-	      rb_intern("@@default_mode"),
-	      mode,Qtrue); 
+  rb_iv_set(RSRUBY,
+	    "@default_mode",
+	    mode); 
 
   return Qnil;
 
@@ -515,13 +509,8 @@ to_ruby_proc(SEXP robj, VALUE *obj)
   rb_iv_set(tmp,"@wrap",Qfalse);
 
   //Again set conversion mode to basic to prevent recursion
-  mode = rb_cvar_get(rb_const_get(rb_cObject, 
-				  rb_intern("RSRuby")),
-		     rb_intern("@@default_mode"));
-  rb_cvar_set(rb_const_get(rb_cObject, 
-			   rb_intern("RSRuby")),
-	      rb_intern("@@default_mode"),
-	      INT2FIX(BASIC_CONVERSION),Qtrue);
+  mode = rb_iv_get(RSRUBY,"@default_mode");
+  rb_iv_set(RSRUBY, "@default_mode", INT2FIX(BASIC_CONVERSION));
 
   //New safe code
   args[0] = fun;
@@ -538,9 +527,7 @@ VALUE from_class_table(SEXP robj)
   VALUE key, fun, class_table;
   int i;
 
-  class_table = rb_cvar_get(rb_const_get(rb_cObject, 
-					 rb_intern("RSRuby")),
-			    rb_intern("@@class_table"));
+  class_table = rb_iv_get(RSRUBY, "@class_table");
 
   PROTECT(rclass = GET_CLASS(robj));
 
@@ -588,13 +575,8 @@ to_ruby_class(SEXP robj, VALUE *obj)
   rb_iv_set(tmp,"@wrap",Qfalse);
 
   //Again set conversion mode to basic to prevent recursion
-  mode = rb_cvar_get(rb_const_get(rb_cObject, 
-				  rb_intern("RSRuby")),
-		     rb_intern("@@default_mode"));
-  rb_cvar_set(rb_const_get(rb_cObject, 
-			   rb_intern("RSRuby")),
-	      rb_intern("@@default_mode"),
-	      INT2FIX(BASIC_CONVERSION),Qtrue);
+  mode = rb_iv_get(RSRUBY, "@default_mode");
+  rb_iv_set(RSRUBY, "@default_mode", INT2FIX(BASIC_CONVERSION));
 
   //New safe code
   args[0] = fun;
