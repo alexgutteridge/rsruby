@@ -142,7 +142,6 @@ VALUE rr_init(VALUE self){
  */
 void init_R(int argc, char **argv){
 
-  int   defaultArgc = 2;
   char *defaultArgv[] = {"rsruby","-q","--vanilla"};
 
   Rf_initEmbeddedR(sizeof(defaultArgv) / sizeof(defaultArgv[0]), defaultArgv);
