@@ -148,6 +148,7 @@ void init_R(int argc, char **argv){
   Rf_initEmbeddedR(defaultArgc, defaultArgv);
 }
 
+
 /* Ruby code */
 
 VALUE cRRuby;
