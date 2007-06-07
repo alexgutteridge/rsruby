@@ -145,7 +145,7 @@ void init_R(int argc, char **argv){
   int   defaultArgc = 2;
   char *defaultArgv[] = {"rsruby","-q","--vanilla"};
 
-  Rf_initEmbeddedR(defaultArgc, defaultArgv);
+  Rf_initEmbeddedR(sizeof(defaultargv) / sizeof(defaultargv[0]), defaultArgv);
 }
 
 
