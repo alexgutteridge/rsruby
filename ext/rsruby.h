@@ -73,7 +73,7 @@ void r_finalize(void);
 SEXP RecursiveRelease(SEXP obj, SEXP list);
 //static void Robj_dealloc(VALUE self);
 
-VALUE shutdown(VALUE self);
+VALUE rs_shutdown(VALUE self);
 VALUE get_fun(VALUE self, VALUE name);
 VALUE rr_init(VALUE self);
 

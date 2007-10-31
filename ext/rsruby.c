@@ -114,7 +114,7 @@ void r_finalize(void)
 /*
  * Shutdown the R interpreter
  */
-VALUE cShutdown(VALUE self){
+VALUE rs_shutdown(VALUE self){
 
   r_finalize();
   return Qtrue;
@@ -159,7 +159,7 @@ void Init_rsruby(){
 
   rb_define_method(cRRuby, "r_init", rr_init, 0);
   rb_define_method(cRRuby, "get_fun", get_fun, 1);
-  rb_define_method(cRRuby, "shutdown", cShutdown, 0);
+  rb_define_method(cRRuby, "shutdown", rs_shutdown, 0);
 
   //Add the lcall method to RObj
   cRObj  = rb_const_get(rb_cObject,rb_intern("RObj"));

@@ -46,7 +46,7 @@ task :build_extension => ['ext/rsruby.so']
 SRC = FileList['ext/*.c'] + FileList['ext/*.h']
 file 'ext/rsruby.so' => SRC do
   Dir.chdir('ext')
-  system("ruby extconf.rb --with-R-dir=$R_HOME")
+  system("ruby extconf.rb --with-R-dir=$R_HOME --with-R-include=/usr/share/R/include/")
   system("make")
   Dir.chdir('..')
 end
