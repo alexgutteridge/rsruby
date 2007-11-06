@@ -2,6 +2,7 @@ History.txt
 License.txt
 Manifest.txt
 README.txt
+Rakefile.rb
 examples/arrayfields.rb
 examples/bioc.rb
 examples/dataframe.rb
