@@ -18,8 +18,8 @@ hoe = Hoe.new("rsruby",'0.4.5') do |p|
   p.rdoc_pattern = /(^lib\/.*\.rb$|^examples\/.*\.rb$|^README|^History|^License)/
   
   p.spec_extras = {
-    :extensions    => ['Rakefile.rb'],               # causes rubygems build to proceed through the 'extension' task
-    :require_paths => ['lib','test'],       
+    :extensions    => RUBY_PLATFORM !~ /mswin32$/ ? ['ext/extconf.rb'] : ['Rakefile.rb'], # causes rubygems build to proceed through the 'extension' task when building Gem on win32
+    :require_paths => ['lib','test','ext'],       
     :has_rdoc      => true,
     :extra_rdoc_files => ["README.txt","History.txt","License.txt"] + FileList["examples/*"],
     :rdoc_options  => ["--exclude", "test/*", "--main", "README.txt", "--inline-source"]
@@ -47,7 +47,7 @@ SRC = FileList['ext/*.c'] + FileList['ext/*.h']
 file 'ext/rsruby_c.so' => SRC do
   Dir.chdir('ext')
   if RUBY_PLATFORM !~ /mswin32$/
-    system("ruby extconf.rb --with-R-dir=$R_HOME --with-R-include=/usr/share/R/include/")
+    system("ruby extconf.rb -- --with-R-dir=$R_HOME --with-R-include=/usr/share/R/include/")
     system("make")
   else
     # Windows-specific build that does not use extconf.rb or make
