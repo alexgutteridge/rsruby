@@ -27,7 +27,7 @@ class TestNewCases < Test::Unit::TestCase
     assert_instance_of(DataFrame,table)
     
     assert_equal(['A','B','C','D'],table.columns)
-    assert_equal(['1','2','3'],table.rows)
+    assert_equal([1,2,3],table.rows)
 
     #assert_equal(['X1','X2','X3'],table['A'])
     assert_equal('X2',table[1,'A'])

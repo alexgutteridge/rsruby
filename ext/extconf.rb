@@ -10,4 +10,4 @@ unless have_header("R.h")
   exit 1
 end
 
-create_makefile("rsruby")
+create_makefile("rsruby_c")

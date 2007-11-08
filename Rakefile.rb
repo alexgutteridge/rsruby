@@ -42,9 +42,9 @@ end
 hoe.spec.dependencies.delete_if{|dep| dep.name == "hoe"}
 
 desc "Uses extconf.rb and make to build the extension"
-task :build_extension => ['ext/rsruby.so']
+task :build_extension => ['ext/rsruby_c.so']
 SRC = FileList['ext/*.c'] + FileList['ext/*.h']
-file 'ext/rsruby.so' => SRC do
+file 'ext/rsruby_c.so' => SRC do
   Dir.chdir('ext')
   if RUBY_PLATFORM !~ /mswin32$/
     system("ruby extconf.rb --with-R-dir=$R_HOME --with-R-include=/usr/share/R/include/")
@@ -102,7 +102,7 @@ file 'ext/rsruby.so' => SRC do
     end.compact
     
     # same notes as extconf.rb
-    sh( %Q{gcc -shared -s -L. -Wl,--enable-auto-image-base,--enable-auto-import,--export-all -L"#{ruby_lib_dir}" -L"#{r_lib_dir}" -o rsruby.so #{OBJ.join(" ")} -lmsvcrt-ruby18 -lR -lwsock32})
+    sh( %Q{gcc -shared -s -L. -Wl,--enable-auto-image-base,--enable-auto-import,--export-all -L"#{ruby_lib_dir}" -L"#{r_lib_dir}" -o rsruby_c.so #{OBJ.join(" ")} -lmsvcrt-ruby18 -lR -lwsock32})
 
   end
   Dir.chdir('..')

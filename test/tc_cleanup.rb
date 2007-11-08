@@ -8,13 +8,9 @@ class TestCleanup < Test::Unit::TestCase
   end
 
   def test_shutdown
-    tempdir = @r.tempdir.call
-    @r.postscript(tempdir+"/foo.ps")
-    @r.plot(1,1)
-    @r.dev_off.call
-    assert(File.exists?(tempdir))
+    @r.eval_R("shutdown_test=10")
     @r.shutdown
-    assert(!File.exists?(tempdir))
+    assert_raise(RException){ @r.eval_R("shutdown_test") }
   end
 
 end

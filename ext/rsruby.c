@@ -102,6 +102,7 @@ void r_finalize(void)
   R_RunExitFinalizers();  
   CleanEd();              
   KillAllDevices();       
+
   if((tmpdir = getenv("R_SESSION_TMPDIR"))) {          
     snprintf((char *)buf, 1024, "rm -rf %s", tmpdir); 
     R_system((char *)buf);                            
@@ -117,6 +118,7 @@ void r_finalize(void)
 VALUE rs_shutdown(VALUE self){
 
   r_finalize();
+  Rf_endEmbeddedR(0);
   return Qtrue;
 
 }
@@ -153,7 +155,7 @@ void init_R(int argc, char **argv){
 VALUE cRRuby;
 VALUE cRObj;
 
-void Init_rsruby(){
+void Init_rsruby_c(){
 
   cRRuby = rb_define_class("RSRuby",rb_cObject);
 

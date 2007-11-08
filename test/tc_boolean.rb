@@ -6,6 +6,7 @@ class TestBoolean < Test::Unit::TestCase
   def setup
     @r = RSRuby.instance
     RSRuby.set_default_mode(RSRuby::NO_DEFAULT)
+    @r.c.autoconvert(RSRuby::BASIC_CONVERSION)
   end
 
   def test_true

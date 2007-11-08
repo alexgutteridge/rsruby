@@ -1,5 +1,5 @@
 require 'rsruby/robj'
-require File.dirname(__FILE__) + '/../ext/rsruby.so'
+require 'rsruby_c'
 require 'singleton'
 
 require 'complex'
