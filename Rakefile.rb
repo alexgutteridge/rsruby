@@ -3,7 +3,8 @@ require 'hoe'
 $LOAD_PATH.unshift("./lib")
 $LOAD_PATH.unshift("./ext")
 
-hoe = Hoe.new("rsruby",'0.4.5') do |p|
+gem_name = RUBY_PLATFORM !~ /mswin32$/ ? "rsruby" : "rsrubywin"
+hoe = Hoe.new(gem_name,'0.4.5') do |p|
   
   p.author = "Alex Gutteridge"
   p.email = "alexg@kuicr.kyoto-u.ac.jp"
@@ -18,7 +19,7 @@ hoe = Hoe.new("rsruby",'0.4.5') do |p|
   p.rdoc_pattern = /(^lib\/.*\.rb$|^examples\/.*\.rb$|^README|^History|^License)/
   
   p.spec_extras = {
-    :extensions    => RUBY_PLATFORM !~ /mswin32$/ ? ['ext/extconf.rb'] : ['Rakefile.rb'], # causes rubygems build to proceed through the 'extension' task when building Gem on win32
+    :extensions    => RUBY_PLATFORM !~ /mswin32$/ ? ['ext/extconf.rb'] : [],
     :require_paths => ['lib','test','ext'],       
     :has_rdoc      => true,
     :extra_rdoc_files => ["README.txt","History.txt","License.txt"] + FileList["examples/*"],
@@ -40,6 +41,14 @@ hoe = Hoe.new("rsruby",'0.4.5') do |p|
 end
 
 hoe.spec.dependencies.delete_if{|dep| dep.name == "hoe"}
+if RUBY_PLATFORM =~ /mswin32$/
+  # add the precompiled rsruby_c.so into the gemspec
+  hoe.spec.files = hoe.spec.files + ["ext/rsruby_c.so"] 
+  
+  # add the :build_extension task to :gem so that the extension gets
+  # built BEFORE packaging (note the task needs to occur first)
+  Rake.application.lookup(:gem).prerequisites.unshift(:build_extension)
+end
 
 desc "Uses extconf.rb and make to build the extension"
 task :build_extension => ['ext/rsruby_c.so']
@@ -70,11 +79,11 @@ file 'ext/rsruby_c.so' => SRC do
     # If you enter the gcc command into the command prompt, you do NOT 
     # need to use the *nix-style paths.  Here it's necessary so the backslashes
     # aren't treated as character escapes in the ruby strings.
-    ruby_install_dir = "C:/ruby"
+    ruby_install_dir = ENV['RUBY_INSTALL_DIR'] || "C:/ruby"
     ruby_headers_dir = "#{ruby_install_dir}/lib/ruby/1.8/i386-mswin32"
     ruby_lib_dir = "#{ruby_install_dir}/lib"
     
-    r_install_dir = "C:/Program Files/R/R-2.6.0"
+    r_install_dir = ENV['R_INSTALL_DIR'] || "C:/Program Files/R/R-2.6.0"
     r_headers_dir = "#{r_install_dir}/include"
     r_lib_dir = "#{r_install_dir}/bin"
     
@@ -85,7 +94,28 @@ file 'ext/rsruby_c.so' => SRC do
     # _MSC_VER:: prevents "MSC version unmatch" error -- it may not be smart to bypass this check
     # STRICT_R_HEADERS:: prevents "ERROR" redefinition
     defines = "-DHAVE_R_H -DHAVE_ISINF -D_MSC_VER=1200 -DSTRICT_R_HEADERS"
+    
+    # check required files exist
+    [ruby_headers_dir, ruby_lib_dir].each do |dir|
+      next if File.exists?(dir)
+      raise %Q{
+Build Error: 
+ruby directory does not exist (#{dir})
+Try setting RUBY_INSTALL_DIR to the ruby installation directory.
 
+}
+    end
+    
+    [r_headers_dir, r_lib_dir].each do |dir|
+      next if File.exists?(dir)
+      raise %Q{
+Build Error: 
+R directory does not exist (#{dir})
+Try setting R_INSTALL_DIR to the R installation directory.
+
+}
+    end
+    
     OBJ = SRC.collect do |src|
       next unless File.extname(src) == ".c"
       
@@ -103,32 +133,8 @@ file 'ext/rsruby_c.so' => SRC do
     
     # same notes as extconf.rb
     sh( %Q{gcc -shared -s -L. -Wl,--enable-auto-image-base,--enable-auto-import,--export-all -L"#{ruby_lib_dir}" -L"#{r_lib_dir}" -o rsruby_c.so #{OBJ.join(" ")} -lmsvcrt-ruby18 -lR -lwsock32})
-
   end
   Dir.chdir('..')
-end
-
-task :extension => [:build_extension] do
-  # RubyGems can build extensions in a number of ways.  If you provide the 
-  # extension like 'ext/extconf.rb' then it will build through extconf.rb.
-  # If you provide 'Rakefile.rb' then the build proceeds through the :extension
-  # task.  See 'rubygems/installer.rb' and search for the build_extensions
-  # method for more info.
-  #
-  # It looks like by default the rubygems build (through extconf.rb) copies
-  # the .so or .bundle file to the lib directory so require can find it.  The
-  # :extension task should do something similar, like:
-  #
-  #   cp 'ext/rsruby.so', File.join(ENV['RUBYLIBDIR'], "rsruby.so") 
-  #
-  # (RUBYLIBDIR is set by rubygems... see the ExtRakeBuilder class
-  # in rubygems/installer.rb)
-  #
-  # I think this is a fragile approach since on different systems like OS X, 
-  # the result is a .bundle file.  Then you're left with a stack of
-  # 'if .bundle cp .bundle if .so cp .so' statements.  Instead I modified 
-  # rsruby.rb to require the file directly from the ext directory.  I think
-  # this will be more robust.
 end
 
 task :test => [:build_extension]

@@ -2,7 +2,8 @@ require 'test/unit'
 require 'rsruby'
 
 class TestToRuby < Test::Unit::TestCase
-
+  @@test_dir = File.expand_path File.dirname(__FILE__) 
+  
   def setup
     @r = RSRuby.instance
     RSRuby.set_default_mode(RSRuby::NO_DEFAULT)
@@ -70,7 +71,7 @@ class TestToRuby < Test::Unit::TestCase
   #TODO - table.txt?????????
   def test_dataframe_to_list
     @r.read_table.autoconvert(RSRuby::BASIC_CONVERSION)
-    assert_equal(@r.read_table("test/table.txt", {:header => 1}), 
+    assert_equal(@r.read_table(@@test_dir+"/table.txt", {:header => 1}), 
       {
         'A' => ['X1','X2','X3'], 
         'C' => [5,8,2], 
