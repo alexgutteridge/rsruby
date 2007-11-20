@@ -66,7 +66,7 @@ class RSRuby
   NO_CONVERSION = 0
   NO_DEFAULT = -1
 
-  attr_accessor :proc_table, :class_table, :default_mode
+  attr_accessor :proc_table, :class_table, :default_mode, :caching
 
   #Create a new RSRuby interpreter instance. The Singleton design pattern
   #ensures that only one instance can be running in a script. Further
@@ -80,7 +80,18 @@ class RSRuby
 
     @class_table = {}
     @proc_table  = {}
+    
+    @caching = true
+    reset_cache
+    
+    #Catch errors
+    self.__init_eval_R__("options(error=expression(NULL))")
+    #disable errors
+    self.__init_eval_R__("options(show.error.messages=F)")
 
+  end
+  
+  def reset_cache
     #Setup R object cache
     @cache = {}
     @cache['get'] = self.get_fun('get')
@@ -98,14 +109,13 @@ class RSRuby
     
     #help!
     @cache['helpfun'] = self.with_mode(NO_CONVERSION, self.__getitem__('help',true))
-
-    #Catch errors
-    self.__init_eval_R__("options(error=expression(NULL))")
-    #disable errors
-    self.__init_eval_R__("options(show.error.messages=F)")
-
   end
-
+  
+  #Delete an R object from the cache. Use R-style function naming, not ruby style.
+  def delete_from_cache(x)
+    @cache.delete(x)
+  end
+  
   #Handles method name conversion and calling of R functions
   #If called without args the R function/varialbe is returned rather
   #than called.
@@ -261,16 +271,17 @@ class RSRuby
   def __getitem__(name,init=false)
 
     #Find the identifier and cache (unless already cached)
-    unless @cache.has_key?(name)
+    unless @cache.has_key?(name) && @caching
       if init
-        @cache[name] = @cache['get'].__init_lcall__([['',name]])
+        robj = @cache['get'].__init_lcall__([['',name]])
       else
-        @cache[name] = @cache['get'].lcall([['',name]])
+        robj = @cache['get'].lcall([['',name]])
       end
+      @cache[name] = robj if @caching
     end
 
     #Retrieve object from cache
-    robj = @cache[name]
+    robj ||= @cache[name]
 
     return robj
 

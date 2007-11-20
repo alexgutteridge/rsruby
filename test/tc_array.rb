@@ -15,6 +15,10 @@ class TestArray < Test::Unit::TestCase
     @r.array.autoconvert(RSRuby::BASIC_CONVERSION)
   end
 
+  def test_boolean
+    assert_equal [true,false], @r.c(true,false)
+  end
+
   def test_convert_to_ruby
     assert_equal(@ruby_AoA,@r_array.to_ruby)
   end

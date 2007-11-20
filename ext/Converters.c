@@ -143,8 +143,8 @@ SEXP array_to_R(VALUE obj)
 
   state = -1;
   for (i=0; i<RARRAY(obj)->len; i++) {
-    if (!(it = rb_ary_entry(obj, i)))
-      goto exception;
+
+    it = rb_ary_entry(obj, i);
 
     if (state < 0)
       state = type_to_int(it);
@@ -183,6 +183,7 @@ SEXP array_to_R(VALUE obj)
 
 exception:
   UNPROTECT(1);
+  rb_raise(rb_eArgError,"Error converting Array to R\n");
   return NULL;
 }
 
