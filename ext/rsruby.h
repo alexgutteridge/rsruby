@@ -59,7 +59,8 @@
 
 /* Missing definitions from Rinterface.h or RStartup.h */
 # define CleanEd Rf_CleanEd
-extern int Rf_initEmbeddedR(int argc, char **argv);
+extern int Rf_initEmbeddedR(int argc, char **argv);   
+extern int R_Interactive;
 extern void CleanEd(void);
 extern int R_CollectWarnings; 
 # define PrintWarnings Rf_PrintWarnings

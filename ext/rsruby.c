@@ -147,6 +147,7 @@ void init_R(int argc, char **argv){
   char *defaultArgv[] = {"rsruby","-q","--vanilla"};
 
   Rf_initEmbeddedR(sizeof(defaultArgv) / sizeof(defaultArgv[0]), defaultArgv);
+  R_Interactive = FALSE; //Remove crash menu (and other interactive R features)
 }
 
 
