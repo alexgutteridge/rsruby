@@ -149,6 +149,13 @@ void init_R(int argc, char **argv){
   Rf_initEmbeddedR(sizeof(defaultArgv) / sizeof(defaultArgv[0]), defaultArgv);
   R_Interactive = FALSE; //Remove crash menu (and other interactive R features)
 }
+             
+/* This method is for testing catching of segfaults */
+VALUE crash(){
+	int* ptr = (int*)0;
+	 *ptr = 1;
+	return Qtrue; 
+}
 
 
 /* Ruby code */
@@ -163,6 +170,8 @@ void Init_rsruby_c(){
   rb_define_method(cRRuby, "r_init", rr_init, 0);
   rb_define_method(cRRuby, "get_fun", get_fun, 1);
   rb_define_method(cRRuby, "shutdown", rs_shutdown, 0);
+
+rb_define_method(cRRuby, "crash", crash, 0);
 
   //Add the lcall method to RObj
   cRObj  = rb_const_get(rb_cObject,rb_intern("RObj"));

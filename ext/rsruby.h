@@ -76,7 +76,9 @@ SEXP RecursiveRelease(SEXP obj, SEXP list);
 
 VALUE rs_shutdown(VALUE self);
 VALUE get_fun(VALUE self, VALUE name);
-VALUE rr_init(VALUE self);
+VALUE rr_init(VALUE self);   
+
+VALUE crash(void);
 
 VALUE RObj_lcall(VALUE self, VALUE args);
 VALUE RObj_init_lcall(VALUE self, VALUE args);
