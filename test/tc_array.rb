@@ -5,6 +5,7 @@ class TestArray < Test::Unit::TestCase
 
   def setup
     @r = RSRuby.instance
+    @r.gctorture(:on => false)
     @ruby_AoA = [[[0,6,12,18],[2,8,14,20],[4,10,16,22]],
                  [[1,7,13,19],[3,9,15,21],[5,11,17,23]]]
 

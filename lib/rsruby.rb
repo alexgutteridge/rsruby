@@ -53,7 +53,7 @@ require 'complex'
 
 class RSRuby
 
-  VERSION = '0.4.5'
+  VERSION = '0.5'
 
   include Singleton
 

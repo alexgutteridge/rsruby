@@ -17,6 +17,7 @@ class TestToR < Test::Unit::TestCase
 
   def setup
     @r = RSRuby.instance
+    @r.gctorture(:on => true)
     RSRuby.set_default_mode(RSRuby::NO_DEFAULT)
   end
 
@@ -88,6 +89,11 @@ class TestToR < Test::Unit::TestCase
   def test_hash_to_named_vector
     @r.c.autoconvert(RSRuby::NO_CONVERSION)    
     assert_equal(@r.typeof(@r.c(:foo => 5, :bar => 7)),'integer')
+
+    puts @r.c(:foo => 5, :bar => 7)
+    puts @r.attributes(@r.c(:foo => 5, :bar => 7))
+    puts @r.attributes(@r.c(:foo => 5, :bar => 7))['names']
+    
     assert(@r.attributes(@r.c(:foo => 5, :bar => 7))['names'].include?('foo'))
     assert(@r.attributes(@r.c(:foo => 5, :bar => 7))['names'].include?('bar'))
     #TODO - these fail because of the different calling semantics in
