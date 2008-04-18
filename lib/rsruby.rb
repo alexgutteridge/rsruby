@@ -115,7 +115,16 @@ class RSRuby
   def delete_from_cache(x)
     @cache.delete(x)
   end
-  
+
+  def self.img(filename,args={})
+    format = File.extname(filename).gsub(".","").to_sym
+    r = RSRuby.instance
+    raise ArgumentError, "Format #{format.to_s} is not supported" unless [:pdf].include? format
+    r.pdf(filename,args)
+    yield(r)
+    r.dev_off.call
+  end
+
   #Handles method name conversion and calling of R functions
   #If called without args the R function/varialbe is returned rather
   #than called.

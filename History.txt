@@ -1,3 +1,9 @@
+= 0.5 2008-04-18
+
+* Added easy figure method RSRuby.img()
+* Removed R interactive features.
+* Extra test cases
+
 = 0.4.2 2007-01-09
 
 * Several bugs in the conversion system are fixed

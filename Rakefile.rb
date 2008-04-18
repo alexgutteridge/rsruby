@@ -4,10 +4,10 @@ $LOAD_PATH.unshift("./lib")
 $LOAD_PATH.unshift("./ext")
 
 gem_name = RUBY_PLATFORM !~ /mswin32$/ ? "rsruby" : "rsrubywin"
-hoe = Hoe.new(gem_name,'0.4.5') do |p|
+hoe = Hoe.new(gem_name,'0.5') do |p|
   
   p.author = "Alex Gutteridge"
-  p.email = "alexg@kuicr.kyoto-u.ac.jp"
+  p.email = "ag357@cam.ac.uk"
   p.url = "http://web.kuicr.kyoto-u.ac.jp/~alexg/rsruby/"
   
   p.description = p.paragraphs_of("README.txt",1..3)[0]
@@ -26,11 +26,11 @@ hoe = Hoe.new(gem_name,'0.4.5') do |p|
     :rdoc_options  => ["--exclude", "test/*", "--main", "README.txt", "--inline-source"]
   }
 
-  task :setup_rb_package => [:clean, :package, :build_manual] do
+  task :setup_rb_package => [:clean, :package] do
     
     package_dir = "#{p.name}-#{p.version}"
     cp("setup.rb","pkg/#{package_dir}")
-    cp("manual.pdf","pkg/#{package_dir}")
+    #cp("manual.pdf","pkg/#{package_dir}")
     
     Dir.chdir("pkg")
     system("tar -czf #{p.name}-#{p.version}.tgz #{package_dir}")
