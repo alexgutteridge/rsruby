@@ -32,11 +32,13 @@
 #include <rsruby.h>
 #include <R_eval.h>
 
+int interrupted = 0;
+
 /* Abort the current R computation due to a SIGINT */
 void interrupt_R(int signum)
 {
-  //interrupted = 1;
-  //error("Interrupted");
+  interrupted = 1;
+  error("Interrupted");
 }
 
 
@@ -47,17 +49,21 @@ SEXP do_eval_expr(SEXP e) {
   VALUE rb_eRException;
   int error = 0;
 
+  signal(SIGINT, interrupt_R);
+  interrupted = 0;
+
   res = R_tryEval(e, R_GlobalEnv, &error);
 
   if (error) {
-    //if (interrupted) {
-    //  rb_raise(rb_eInterrupt);
-    //}
-    //else
-    rb_eRException = rb_const_get(rb_cObject, 
-				  rb_intern("RException"));
-    rb_raise(rb_eRException, get_last_error_msg());
-    return NULL;
+    if (interrupted) {
+      rb_raise(rb_eInterrupt,"RSRuby interrupted");
+    }
+    else {
+      rb_eRException = rb_const_get(rb_cObject, 
+				    rb_intern("RException"));
+      rb_raise(rb_eRException, get_last_error_msg());
+      return NULL;
+    }
   }
 
   return res;
