@@ -38,7 +38,6 @@
 #include "Rdefines.h"
 #include "Rinternals.h"
 #include "Rdefines.h"
-#include "Rdevices.h"
 
 #include "signal.h"
 

@@ -1,3 +1,7 @@
+= 0.5.1 2008-11-11
+
+* removed #include of Rdevices.h so installation is possible with R 2.8.0 packages
+
 = 0.5 2008-04-18
 
 * Added easy figure method RSRuby.img()
@@ -9,3 +13,4 @@
 * Several bugs in the conversion system are fixed
 * The test suite was expanded and tidied
 * Using Hoe for package management
+

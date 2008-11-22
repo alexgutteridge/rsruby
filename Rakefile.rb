@@ -4,10 +4,10 @@ $LOAD_PATH.unshift("./lib")
 $LOAD_PATH.unshift("./ext")
 
 gem_name = RUBY_PLATFORM !~ /mswin32$/ ? "rsruby" : "rsrubywin"
-hoe = Hoe.new(gem_name,'0.5') do |p|
+hoe = Hoe.new(gem_name,'0.5.1') do |p|
   
-  p.author = "Alex Gutteridge"
-  p.email = "ag357@cam.ac.uk"
+  p.author = "Alex Gutteridge, Ben J Woodcroft"
+  p.email = "ag357@cam.ac.uk, b.woodcroft@pgrad.unimelb.edu.au"
   p.url = "http://web.kuicr.kyoto-u.ac.jp/~alexg/rsruby/"
   
   p.description = p.paragraphs_of("README.txt",1..3)[0]
