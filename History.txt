@@ -1,3 +1,9 @@
+= 0.5.1.1 2009-02-05
+
+* quick hack for ruby 1.9.1
+* test still fails around Complex
+* fix RSRuby.shutdown
+
 = 0.5.1 2008-11-11
 
 * removed #include of Rdevices.h so installation is possible with R 2.8.0 packages

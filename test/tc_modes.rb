@@ -40,11 +40,11 @@ class TestModes < Test::Unit::TestCase
     RSRuby.set_default_mode(RSRuby::VECTOR_CONVERSION)
     assert_equal(sequence.to_ruby, [1,2,3])
 
-    @r.class_table['htest'] = lambda{5}
+    @r.class_table['htest'] = lambda{|x| 5}
     RSRuby.set_default_mode(RSRuby::CLASS_CONVERSION)
     assert_equal(t_test.to_ruby, 5)
 
-    @r.proc_table[lambda{true}] = lambda{return 6}
+    @r.proc_table[lambda{|x| true}] = lambda{|x| return 6}
     RSRuby.set_default_mode(RSRuby::PROC_CONVERSION)
     assert_equal(t_test.to_ruby, 6)
   end
@@ -77,7 +77,7 @@ class TestModes < Test::Unit::TestCase
     assert_equal(@r.array(1,3).class, @r.array.class)
     
     assert_equal(@r.seq(1,3), [1,2,3])
-    @r.class_table['htest'] = lambda{5}
+    @r.class_table['htest'] = lambda{|x| 5}
     assert_equal(@r.t_test([1,2,3]), 5)
   end
 
@@ -149,7 +149,7 @@ class TestModes < Test::Unit::TestCase
 
   def test_class_table
 
-    @r.class_table['htest'] = lambda{'htest'}
+    @r.class_table['htest'] = lambda{|x| 'htest'}
     @r.class_table['data.frame'] = lambda{|x| 
       if @r['[['].call(x,1).length > 2
         return 5
@@ -170,9 +170,9 @@ class TestModes < Test::Unit::TestCase
     f = @r.class__(@r.c(4),'foo')
     g = @r.class__(@r.c(4), ['bar','foo'])
 
-    @r.class_table['foo'] = lambda{'foo'}
-    @r.class_table['bar'] = lambda{'bar'}
-    @r.class_table[['bar','foo']] = lambda{5}
+    @r.class_table['foo'] = lambda{|x| 'foo'}
+    @r.class_table['bar'] = lambda{|x| 'bar'}
+    @r.class_table[['bar','foo']] = lambda{|x| 5}
 
     RSRuby.set_default_mode(RSRuby::CLASS_CONVERSION)
     assert_equal(f.to_ruby, 'foo')

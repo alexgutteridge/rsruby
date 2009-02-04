@@ -49,7 +49,7 @@ VALUE RObj_lcall(VALUE self, VALUE args){
   args = rb_check_array_type(args);
 
   // A SEXP with the function to call and the arguments
-  PROTECT(exp = allocVector(LANGSXP, (RARRAY(args)->len)+1));
+  PROTECT(exp = allocVector(LANGSXP, RARRAY_LEN(args)+1));
   e = exp;
 
   Data_Get_Struct(self, struct SEXPREC, r_obj);
@@ -97,7 +97,7 @@ VALUE RObj_init_lcall(VALUE self, VALUE args){
   args = rb_check_array_type(args);
 
   // A SEXP with the function to call and the arguments
-  PROTECT(exp = allocVector(LANGSXP, (RARRAY(args)->len)+1));
+  PROTECT(exp = allocVector(LANGSXP, RARRAY_LEN(args)+1));
   e = exp;
 
   Data_Get_Struct(self, struct SEXPREC, r_obj);
@@ -137,10 +137,10 @@ make_argl(VALUE args, SEXP *e)
   //Ensure we have an array
   args = rb_check_array_type(args);
   
-  for (i=0; i<RARRAY(args)->len; i++) {
+  for (i=0; i<RARRAY_LEN(args); i++) {
     pair = rb_ary_entry(args, i);
     pair = rb_check_array_type(pair);
-    if(RARRAY(pair)->len != 2)
+    if(RARRAY_LEN(pair) != 2)
       rb_raise(rb_eArgError,"Misformed argument in lcall\n");
 
     /* Name must be a string. If it is empty string '' then no name*/
@@ -158,9 +158,9 @@ make_argl(VALUE args, SEXP *e)
     SETCAR(*e, rvalue);
 
     /* Add name (if present) */
-    if (RSTRING(name)->len > 0) 
+    if (RSTRING_LEN(name) > 0) 
       {
-        SET_TAG(*e, Rf_install(RSTRING(name)->ptr));
+        SET_TAG(*e, Rf_install(RSTRING_PTR(name)));
       }
 
     /* Move index to new end of call */
@@ -177,11 +177,11 @@ VALUE RObj_to_ruby(VALUE self, VALUE args){
 
   args = rb_check_array_type(args);
 
-  if (RARRAY(args)->len > 1){
+  if (RARRAY_LEN(args) > 1){
     rb_raise(rb_eArgError,"Too many arguments in to_ruby\n");
   }
 
-  if (RARRAY(args)->len == 0){
+  if (RARRAY_LEN(args) == 0){
     conv = NUM2INT(rb_iv_get(RSRUBY,"@default_mode"));
   } else {
     conv = NUM2INT(rb_ary_entry(args,0));

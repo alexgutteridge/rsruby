@@ -76,7 +76,7 @@ VALUE get_fun(VALUE self, VALUE name){
 
   str = StringValue(name);
 
-  cstr_name = RSTRING(str)->ptr;
+  cstr_name = RSTRING_PTR(str);
 
   robj = (SEXP)get_fun_from_name(cstr_name);
   if (!robj)
@@ -101,7 +101,7 @@ void r_finalize(void)
   R_dot_Last();           
   R_RunExitFinalizers();  
   CleanEd();              
-  KillAllDevices();       
+  Rf_KillAllDevices();       
 
   if((tmpdir = getenv("R_SESSION_TMPDIR"))) {          
     snprintf((char *)buf, 1024, "rm -rf %s", tmpdir); 

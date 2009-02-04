@@ -4,7 +4,7 @@ $LOAD_PATH.unshift("./lib")
 $LOAD_PATH.unshift("./ext")
 
 gem_name = RUBY_PLATFORM !~ /mswin32$/ ? "rsruby" : "rsrubywin"
-hoe = Hoe.new(gem_name,'0.5.1') do |p|
+hoe = Hoe.new(gem_name,'0.5.1.1') do |p|
   
   p.author = "Alex Gutteridge, Ben J Woodcroft"
   p.email = "ag357@cam.ac.uk, b.woodcroft@pgrad.unimelb.edu.au"
