@@ -14,7 +14,7 @@ hoe = Hoe.new(gem_name,'0.5.1') do |p|
   p.summary     = p.paragraphs_of("README.txt",1)[0]
   p.changes     = p.paragraphs_of("History.txt",0..1).join("\n\n")
   
-  p.clean_globs = ["ext/*.o","ext/*.so","ext/Makefile","ext/mkmf.log","**/*~","email.txt","manual.{aux,log,out,toc,pdf}"]
+  p.clean_globs = ["ext/*.o","ext/*.so","ext/*.bundle","ext/Makefile","ext/mkmf.log","**/*~","email.txt","manual.{aux,log,out,toc,pdf}"]
   
   p.rdoc_pattern = /(^lib\/.*\.rb$|^examples\/.*\.rb$|^README|^History|^License)/
   
