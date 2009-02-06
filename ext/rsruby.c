@@ -76,7 +76,7 @@ VALUE get_fun(VALUE self, VALUE name){
 
   str = StringValue(name);
 
-  cstr_name = RSTRING(str)->ptr;
+  cstr_name = RSTRING_PTR(str);
 
   robj = (SEXP)get_fun_from_name(cstr_name);
   if (!robj)

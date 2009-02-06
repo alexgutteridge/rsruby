@@ -89,7 +89,7 @@ SEXP ruby_to_R(VALUE obj)
   else if (!NIL_P(rb_check_string_type(obj))) 
     {
       PROTECT(robj = NEW_STRING(1));
-      SET_STRING_ELT(robj, 0, COPY_TO_USER_STRING(RSTRING(obj)->ptr));
+      SET_STRING_ELT(robj, 0, COPY_TO_USER_STRING(RSTRING_PTR(obj)));
     }
   else if (!NIL_P(rb_check_array_type(obj))) 
     {
@@ -103,7 +103,7 @@ SEXP ruby_to_R(VALUE obj)
     {
       str = rb_funcall(obj,rb_intern("inspect"),0);
       str = rb_funcall(str,rb_intern("slice"),2,INT2NUM(0),INT2NUM(60));
-      sprintf(buf,"Unsupported object '%s' passed to R.\n",RSTRING(str)->ptr);
+      sprintf(buf,"Unsupported object '%s' passed to R.\n",RSTRING_PTR(str));
       rb_raise(rb_eArgError,buf);
       PROTECT(robj = NULL);       /* Protected to avoid stack inbalance */
     }
@@ -141,13 +141,13 @@ SEXP array_to_R(VALUE obj)
   //Probably unnessecary but just in case
   obj = rb_check_array_type(obj);
 
-  if (RARRAY(obj)->len == 0)
+  if (RARRAY_LEN(obj) == 0)
     return R_NilValue;
 
-  PROTECT(robj = NEW_LIST(RARRAY(obj)->len));
+  PROTECT(robj = NEW_LIST(RARRAY_LEN(obj)));
 
   state = -1;
-  for (i=0; i<RARRAY(obj)->len; i++) {
+  for (i=0; i<RARRAY_LEN(obj); i++) {
 
     it = rb_ary_entry(obj, i);
 
@@ -296,7 +296,7 @@ to_ruby_basic(SEXP robj, VALUE *obj)
 
   status = to_ruby_vector(robj, &tmp, BASIC_CONVERSION);
 
-  if(status==1 && TYPE(tmp) == T_ARRAY && RARRAY(tmp)->len == 1)
+  if(status==1 && TYPE(tmp) == T_ARRAY && RARRAY_LEN(tmp) == 1)
     {
       *obj = rb_ary_entry(tmp, 0);
     }
@@ -600,7 +600,7 @@ VALUE to_ruby_hash(VALUE obj, SEXP names)
   VALUE it, hash;
   char *name;
 
-  if ((len = RARRAY(obj)->len) < 0)
+  if ((len = RARRAY_LEN(obj)) < 0)
     return Qnil;
 
   hash = rb_hash_new();
