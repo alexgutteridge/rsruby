@@ -199,12 +199,6 @@ hash_to_R(VALUE obj)
   VALUE keys, values;
   SEXP robj, names;
 
-  //TODO - Baffling. Not sure what's wrong with these functions?
-  //rb_hash_keys(proc_table);
-  //rb_hash_values(proc_table);
-  //rb_hash_size(proc_table);
-  //compiles, but complains they are undefined symbols when run...
-
   if (FIX2INT(rb_funcall(obj,rb_intern("size"),0)) == 0)
     return R_NilValue;
 
@@ -377,10 +371,8 @@ to_ruby_vector(SEXP robj, VALUE *obj, int mode)
       case CPLXSXP:
         complexes = COMPLEX(robj);
 
-	params[0] = rb_float_new(complexes[i].r);
-	params[1] = rb_float_new(complexes[i].i);
-
-        if (!(it = rb_class_new_instance(2, params, rb_const_get(rb_cObject, rb_intern("Complex")))))
+        if (!(it = rb_complex_new(rb_float_new(complexes[i].r),
+				  rb_float_new(complexes[i].i))))
 
           return -1;
         break;

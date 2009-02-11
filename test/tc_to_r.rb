@@ -115,7 +115,7 @@ class TestToR < Test::Unit::TestCase
   def test_instances_not_convertible
     foo = Foo.new
     assert_raises(ArgumentError){@r.c(foo)}
-   end
+  end
 
   def test_as_r_method
     @r.c.autoconvert(RSRuby::BASIC_CONVERSION)
