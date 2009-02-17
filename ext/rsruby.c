@@ -101,7 +101,7 @@ void r_finalize(void)
   R_dot_Last();           
   R_RunExitFinalizers();  
   CleanEd();              
-  KillAllDevices();       
+  Rf_KillAllDevices();       
 
   if((tmpdir = getenv("R_SESSION_TMPDIR"))) {          
     snprintf((char *)buf, 1024, "rm -rf %s", tmpdir); 
