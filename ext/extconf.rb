@@ -17,5 +17,6 @@ File.open("config.h", "w") do |f|
   f.puts("#define RSRUBY_R_HOME #{r_home}")
   f.puts("#endif")
 end
+$extconf_h = 'config.h'
 
 create_makefile("rsruby_c")
