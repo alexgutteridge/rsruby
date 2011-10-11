@@ -4,21 +4,21 @@ $LOAD_PATH.unshift("./lib")
 $LOAD_PATH.unshift("./ext")
 
 gem_name = RUBY_PLATFORM !~ /mswin32$/ ? "rsruby" : "rsrubywin"
-hoe = Hoe.new(gem_name,'0.5.1.1') do |p|
+hoe = Hoe.spec gem_name do 
   
-  p.author = "Alex Gutteridge, Ben J Woodcroft"
-  p.email = "ag357@cam.ac.uk, b.woodcroft@pgrad.unimelb.edu.au"
-  p.url = "http://web.kuicr.kyoto-u.ac.jp/~alexg/rsruby/"
+#  author = "Alex Gutteridge, Ben J Woodcroft"
+#  email = "ag357@cam.ac.uk, b.woodcroft@pgrad.unimelb.edu.au"
+  url = "http://web.kuicr.kyoto-u.ac.jp/~alexg/rsruby/"
+  developer 'Aaron Goodman', 'aaron@custora.com'
+  description = paragraphs_of("README.txt",1..3)[0]
+  summary     = paragraphs_of("README.txt",1)[0]
+  changes     = paragraphs_of("History.txt",0..1).join("\n\n")
   
-  p.description = p.paragraphs_of("README.txt",1..3)[0]
-  p.summary     = p.paragraphs_of("README.txt",1)[0]
-  p.changes     = p.paragraphs_of("History.txt",0..1).join("\n\n")
+  clean_globs = ["ext/*.o","ext/*.so","ext/Makefile","ext/mkmf.log","**/*~","email.txt","manual.{aux,log,out,toc,pdf}"]
   
-  p.clean_globs = ["ext/*.o","ext/*.so","ext/*.bundle","ext/Makefile","ext/mkmf.log","**/*~","email.txt","manual.{aux,log,out,toc,pdf}"]
+#  p.rdoc_pattern = /(^lib\/.*\.rb$|^examples\/.*\.rb$|^README|^History|^License)/
   
-  p.rdoc_pattern = /(^lib\/.*\.rb$|^examples\/.*\.rb$|^README|^History|^License)/
-  
-  p.spec_extras = {
+  spec_extras = {
     :extensions    => RUBY_PLATFORM !~ /mswin32$/ ? ['ext/extconf.rb'] : [],
     :require_paths => ['lib','test','ext'],       
     :has_rdoc      => true,
