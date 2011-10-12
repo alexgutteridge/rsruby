@@ -99,16 +99,6 @@ void r_finalize(void)
   char * tmpdir;
   
   R_dot_Last();           
-  R_RunExitFinalizers();  
-  CleanEd();              
-  Rf_KillAllDevices();       
-
-  if((tmpdir = getenv("R_SESSION_TMPDIR"))) {          
-    snprintf((char *)buf, 1024, "rm -rf %s", tmpdir); 
-    R_system((char *)buf);                            
-  }
-  
-  PrintWarnings();	/* from device close and .Last */
   R_gc();  /* Remove any remaining R objects from memory */
 }
 
