@@ -168,5 +168,6 @@ void Init_rsruby_c(){
   rb_define_method(cRObj, "lcall", RObj_lcall, 1);
   rb_define_method(cRObj, "__init_lcall__", RObj_init_lcall, 1);  
   rb_define_method(cRObj, "to_ruby", RObj_to_ruby, -2);
+  rb_define_method(cRObj, "to_R", ruby_to_R, 1);
 
 }
