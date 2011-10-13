@@ -33,7 +33,7 @@
 
 /* Global list to protect R objects from garbage collection */
 /* This is inspired in $R_SRC/src/main/memory.c */
-//static SEXP R_References;
+static SEXP R_References;
 
 SEXP
 RecursiveRelease(SEXP obj, SEXP list)
@@ -61,6 +61,10 @@ RecursiveRelease(SEXP obj, SEXP list)
   return;
   }*/
 
+void protect_robj(){
+  R_References = CONS(robj, R_References);
+  SET_SYMVALUE(install("R.References"), R_References);
+}
 
 /* Obtain an R object via its name.
  * This is only used to get the 'get' function.
@@ -118,7 +122,6 @@ VALUE rs_shutdown(VALUE self){
  */
 VALUE rr_init(VALUE self){
 
-  SEXP R_References;
 
   init_R(0,NULL);
   // Initialize the list of protected objects
@@ -171,3 +174,4 @@ void Init_rsruby_c(){
   rb_define_method(cRObj, "to_R", ruby_to_R, 1);
 
 }
+

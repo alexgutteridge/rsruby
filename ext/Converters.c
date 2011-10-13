@@ -32,6 +32,7 @@
 #include <rsruby.h>
 #include "Converters.h"
 
+
 // ************** Converters from Ruby to R *********//
 
 
@@ -271,6 +272,9 @@ VALUE to_ruby_with_mode(SEXP robj, int mode)
       if (i<0) return Qnil;
       if (i==1) break;
     default:
+      R_References = CONS(robj, R_References);
+      SET_SYMVALUE(install("R.References"), R_References);
+
       obj = Data_Wrap_Struct(rb_const_get(rb_cObject, 
 					  rb_intern("RObj")), 0, 0, robj);
       rb_iv_set(obj,"@conversion",INT2FIX(TOP_MODE));
