@@ -36,6 +36,14 @@
 // ************** Converters from Ruby to R *********//
 
 
+VALUE ruby_to_Robj(VALUE self, VALUE args){
+
+  SEXP robj;
+  VALUE  val;
+  robj = ruby_to_R(args);
+  val = to_ruby_with_mode(robj,NO_CONVERSION);
+  return val;
+}
 SEXP ruby_to_R(VALUE obj)
 {
   SEXP robj;

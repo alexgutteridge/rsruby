@@ -37,8 +37,7 @@
 /* This is inspired in $R_SRC/src/main/memory.c */
 static SEXP R_References;
 void protect_robj(SEXP robj){
-  R_References = CONS(robj, R_References);
-  SET_SYMVALUE(install("R.References"), R_References);
+  R_PreserveObject(robj);
 }
 
 SEXP
@@ -55,16 +54,10 @@ RecursiveRelease(SEXP obj, SEXP list)
 
 /* TODO: This needs implementing as a Ruby destructor for each RObj */
 void
-Robj_dealloc(VALUE self)
+Robj_dealloc(SEXP robj)
 {
-  SEXP robj;
-  
-  Data_Get_Struct(self, struct SEXPREC, robj);
-  
-  R_References = RecursiveRelease(robj, R_References);
-  SET_SYMVALUE(install("R.References"), R_References);
-  
-  return;
+  R_ReleaseObject(robj);
+ 
 }
 
 
@@ -170,13 +163,14 @@ void Init_rsruby_c(){
   rb_define_method(cRRuby, "shutdown", rs_shutdown, 0);
 
   rb_define_method(cRRuby, "crash", crash, 0);
+  rb_define_method(cRRuby, "to_R", ruby_to_Robj, 1);
 
   //Add the lcall method to RObj
   cRObj  = rb_const_get(rb_cObject,rb_intern("RObj"));
   rb_define_method(cRObj, "lcall", RObj_lcall, 1);
   rb_define_method(cRObj, "__init_lcall__", RObj_init_lcall, 1);  
   rb_define_method(cRObj, "to_ruby", RObj_to_ruby, -2);
-  rb_define_method(cRObj, "to_R", ruby_to_R, 1);
+
 
 }
 

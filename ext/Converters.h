@@ -36,6 +36,7 @@
 
 //Converters for Ruby to R
 SEXP ruby_to_R(VALUE val);
+VALUE ruby_to_Robj(VALUE self,VALUE args);
 
 SEXP array_to_R(VALUE obj);
 SEXP hash_to_R(VALUE obj);
