@@ -49,7 +49,7 @@ VALUE RObj_lcall(VALUE self, VALUE args){
   args = rb_check_array_type(args);
 
   // A SEXP with the function to call and the arguments
-  PROTECT(exp = allocVector(LANGSXP, RARRAY_LEN(args)+1));
+  PROTECT(exp = allocVector(LANGSXP, (RARRAY_LEN(args))+1));
   e = exp;
 
   Data_Get_Struct(self, struct SEXPREC, r_obj);
@@ -97,7 +97,7 @@ VALUE RObj_init_lcall(VALUE self, VALUE args){
   args = rb_check_array_type(args);
 
   // A SEXP with the function to call and the arguments
-  PROTECT(exp = allocVector(LANGSXP, RARRAY_LEN(args)+1));
+  PROTECT(exp = allocVector(LANGSXP, (RARRAY_LEN(args))+1));
   e = exp;
 
   Data_Get_Struct(self, struct SEXPREC, r_obj);
