@@ -272,11 +272,9 @@ VALUE to_ruby_with_mode(SEXP robj, int mode)
       if (i<0) return Qnil;
       if (i==1) break;
     default:
-      R_References = CONS(robj, R_References);
-      SET_SYMVALUE(install("R.References"), R_References);
-
+      protect_robj(robj);
       obj = Data_Wrap_Struct(rb_const_get(rb_cObject, 
-					  rb_intern("RObj")), 0, 0, robj);
+					  rb_intern("RObj")), 0,  &Robj_dealloc, robj);
       rb_iv_set(obj,"@conversion",INT2FIX(TOP_MODE));
       rb_iv_set(obj,"@wrap",Qfalse);
   }
@@ -443,7 +441,7 @@ from_proc_table(SEXP robj, VALUE *fun)
   l     = FIX2INT(rb_funcall(proc_table,rb_intern("size"),0));
 
   obj = Data_Wrap_Struct(rb_const_get(rb_cObject, 
-				      rb_intern("RObj")), 0, 0, robj);
+				      rb_intern("RObj")), 0,  &Robj_dealloc, robj);
   rb_iv_set(obj,"@conversion",INT2FIX(TOP_MODE));
   rb_iv_set(obj,"@wrap",Qfalse);
   
@@ -506,7 +504,7 @@ to_ruby_proc(SEXP robj, VALUE *obj)
   //Create new object based on robj and call the function
   //found above with it as argument
   tmp = Data_Wrap_Struct(rb_const_get(rb_cObject, 
-				      rb_intern("RObj")), 0, 0, robj);
+				      rb_intern("RObj")), 0,  &Robj_dealloc, robj);
   rb_iv_set(tmp,"@conversion",INT2FIX(TOP_MODE));
   rb_iv_set(tmp,"@wrap",Qfalse);
 
@@ -572,7 +570,7 @@ to_ruby_class(SEXP robj, VALUE *obj)
     return 0;                   /* conversion failed */
   
   tmp = Data_Wrap_Struct(rb_const_get(rb_cObject, 
-				      rb_intern("RObj")), 0, 0, robj);
+				      rb_intern("RObj")), 0,  &Robj_dealloc, robj);
   rb_iv_set(tmp,"@conversion",INT2FIX(TOP_MODE));  
   rb_iv_set(tmp,"@wrap",Qfalse);
 
