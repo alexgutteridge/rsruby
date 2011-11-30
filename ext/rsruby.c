@@ -36,6 +36,10 @@
 /* Global list to protect R objects from garbage collection */
 /* This is inspired in $R_SRC/src/main/memory.c */
 static SEXP R_References;
+void protect_robj(SEXP robj){
+  R_References = CONS(robj, R_References);
+  SET_SYMVALUE(install("R.References"), R_References);
+}
 
 SEXP
 RecursiveRelease(SEXP obj, SEXP list)
@@ -50,9 +54,9 @@ RecursiveRelease(SEXP obj, SEXP list)
 }
 
 /* TODO: This needs implementing as a Ruby destructor for each RObj */
-/*static void
-  Robj_dealloc(VALUE self)
-  {
+void
+Robj_dealloc(VALUE self)
+{
   SEXP robj;
   
   Data_Get_Struct(self, struct SEXPREC, robj);
@@ -61,12 +65,8 @@ RecursiveRelease(SEXP obj, SEXP list)
   SET_SYMVALUE(install("R.References"), R_References);
   
   return;
-  }*/
-
-void protect_robj(){
-  R_References = CONS(robj, R_References);
-  SET_SYMVALUE(install("R.References"), R_References);
 }
+
 
 /* Obtain an R object via its name.
  * This is only used to get the 'get' function.
@@ -90,7 +90,7 @@ VALUE get_fun(VALUE self, VALUE name){
 
   /* Wrap the returned R object as a ruby Object */
   rubyobj = Data_Wrap_Struct(rb_const_get(rb_cObject, 
-					  rb_intern("RObj")), 0, 0, robj);
+					  rb_intern("RObj")), 0, &Robj_dealloc , robj);
   rb_iv_set(rubyobj,"@conversion",INT2FIX(conversion));
   rb_iv_set(rubyobj,"@wrap",Qfalse);
 

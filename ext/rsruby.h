@@ -84,5 +84,6 @@ VALUE RObj_init_lcall(VALUE self, VALUE args);
 VALUE RObj_to_ruby(VALUE self, VALUE args);
 int make_argl(VALUE args, SEXP *e);
 void protect_robj(SEXP robj);
+void Robj_dealloc(VALUE self);
 #endif
 
