@@ -1,4 +1,5 @@
 require 'rsruby/robj'
+require 'rsruby/rarray'
 require 'rsruby_c'
 require 'singleton'
 
