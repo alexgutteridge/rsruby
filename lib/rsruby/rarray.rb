@@ -30,7 +30,6 @@ class RArray
     new_order = _keys.map{|x|
       all_keys.index(x)
     }
-    new_order=new_order.compact
     new_array = subset_helper(@array,new_order,0,_dim)
     if @dimnames.is_a? Array
       new_dimnames = @dimnames.dup
@@ -44,7 +43,7 @@ class RArray
   def subset_helper(_array,_new_order,_current_depth,_target_depth)
     if _current_depth == _target_depth
       _new_order.map{|x|
-        _array.fetch(x)
+        x.nil? ? nil : _array.fetch(x)
       }
     else
       _array.map{|x|
