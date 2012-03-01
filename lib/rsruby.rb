@@ -134,8 +134,7 @@ class RSRuby
     #Translate Ruby method call to R
     robj_name = RSRuby.convert_method_name(r_id.to_s)
 
-    #Retrieve it
-    robj = self.__getitem__(robj_name)
+    robj = robj_name =~ /(.+)::(.+)/ ? self.send('::',$1,$2) : self.__getitem__(robj_name) 
 
     #TODO perhaps this is not neccessary - always call these methods
     #use the [] syntax for variables etc...
