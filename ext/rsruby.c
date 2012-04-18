@@ -117,7 +117,7 @@ VALUE rs_shutdown(VALUE self){
  */
 VALUE rr_init(VALUE self){
 
-
+  
   init_R(0,NULL);
   // Initialize the list of protected objects
   R_References = R_NilValue;
@@ -137,7 +137,11 @@ void init_R(int argc, char **argv){
   if (RSRUBY_R_HOME) {
     setenv("R_HOME", RSRUBY_R_HOME, 0);
   }
-  Rf_initEmbeddedR(sizeof(defaultArgv) / sizeof(defaultArgv[0]), defaultArgv);
+  // Rf_initEmbeddedR(sizeof(defaultArgv) / sizeof(defaultArgv[0]), defaultArgv);
+  Rf_initialize_R(sizeof(defaultArgv) / sizeof(defaultArgv[0]), defaultArgv);
+  R_Interactive = TRUE; 
+  R_CStackLimit = (uintptr_t)-1; //disable stack limit checking
+  setup_Rmainloop();
   R_Interactive = FALSE; //Remove crash menu (and other interactive R features)
 }
              

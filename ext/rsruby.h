@@ -31,14 +31,15 @@
 
 #ifndef R_RUBY_MAIN
 #define R_RUBY_MAIN
-
+#define CSTACK_DEFNS
 #include "ruby.h"
 
 #include "R.h"
 #include "Rdefines.h"
 #include "Rinternals.h"
 #include "Rdefines.h"
-
+#include "Rinterface.h"
+#include "Rembedded.h"
 #include "signal.h"
 
 #include "R_eval.h"
@@ -58,8 +59,6 @@
 
 /* Missing definitions from Rinterface.h or RStartup.h */
 # define CleanEd Rf_CleanEd
-extern int Rf_initEmbeddedR(int argc, char **argv);   
-extern int R_Interactive;
 extern void CleanEd(void);
 extern int R_CollectWarnings; 
 # define PrintWarnings Rf_PrintWarnings
