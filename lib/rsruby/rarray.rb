@@ -54,7 +54,8 @@ class RArray
   def get(*_args)
     indices = _args.each_with_index.map{|x,i|
       d = dimnames_along_dimension(i)
-      j= d.index(x)
+      return nil unless d
+      j = d.index(x)
       return nil unless j
       j
     }
