@@ -392,7 +392,7 @@ to_ruby_vector(SEXP robj, VALUE *obj, int mode)
         else
           {
             strings = CHAR(STRING_ELT(robj, i));
-            if (!(it = rb_str_new2(strings)))
+            if (!(it = rb_external_str_new_cstr(strings)))
               return -1;
           }
         break;

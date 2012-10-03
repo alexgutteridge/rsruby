@@ -33,7 +33,6 @@
 #define R_RUBY_MAIN
 #define CSTACK_DEFNS
 #include "ruby.h"
-
 #include "R.h"
 #include "Rdefines.h"
 #include "Rinternals.h"
