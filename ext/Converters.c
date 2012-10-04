@@ -360,11 +360,11 @@ to_ruby_vector(SEXP robj, VALUE *obj, int mode)
         if(isFactor(robj)) {
           /* Watch for NA's! */
           if(integers[i]==NA_INTEGER)
-            it = rb_str_new2(CHAR(NA_STRING));
+            it = rb_external_str_new_cstr(CHAR(NA_STRING));
           else
             {
               thislevel = CHAR(STRING_ELT(GET_LEVELS(robj), integers[i]-1));
-              if (!(it = rb_str_new2(thislevel)))
+              if (!(it = rb_external_str_new_cstr(thislevel)))
                 return -1;
             }
         }
@@ -388,7 +388,7 @@ to_ruby_vector(SEXP robj, VALUE *obj, int mode)
         break;
       case STRSXP:
         if(STRING_ELT(robj, i)==R_NaString)
-          it = rb_str_new2(CHAR(NA_STRING));
+          it = rb_external_str_new_cstr(CHAR(NA_STRING));
         else
           {
             strings = CHAR(STRING_ELT(robj, i));
@@ -552,7 +552,7 @@ VALUE from_class_table(SEXP robj)
 
       for (i=0; i<GET_LENGTH(rclass); i++){
 	fun = rb_hash_aref(class_table,
-			   rb_str_new2(CHAR(STRING_ELT(rclass, i))));
+			   rb_external_str_new_cstr(CHAR(STRING_ELT(rclass, i))));
 	if (fun != Qnil){
           break;
 	}
@@ -608,7 +608,7 @@ VALUE to_ruby_hash(VALUE obj, SEXP names)
   for (i=0; i<len; i++) {
     it = rb_ary_entry(obj, i);
     name = CHAR(STRING_ELT(names, i));
-    rb_hash_aset(hash, rb_str_new2(name), it);
+    rb_hash_aset(hash, rb_external_str_new_cstr(name), it);
   }
   
   return hash;
