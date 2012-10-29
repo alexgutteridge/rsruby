@@ -61,7 +61,7 @@ SEXP do_eval_expr(SEXP e) {
     else {
       rb_eRException = rb_const_get(rb_cObject, 
 				    rb_intern("RException"));
-      rb_raise(rb_eRException, get_last_error_msg());
+      rb_raise(rb_eRException, "%s", get_last_error_msg());
       return NULL;
     }
   }
