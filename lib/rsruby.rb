@@ -181,9 +181,7 @@ class RSRuby
     if name.length > 1 and name[-1].chr == '_' and name[-2].chr != '_'
       name = name[0..-2]
     end
-    name.gsub!(/__/,'<-')
-    name.gsub!(/_/, '.')
-    return name
+    return name.gsub(/__/, '<-').gsub(/_/, '.')
   end
 
   #Converts an Array of function arguments into lcall format. If the last 
