@@ -1,4 +1,5 @@
 require 'rsruby/robj'
+require 'rsruby/rarray'
 require 'rsruby_c'
 require 'singleton'
 
@@ -133,8 +134,7 @@ class RSRuby
     #Translate Ruby method call to R
     robj_name = RSRuby.convert_method_name(r_id.to_s)
 
-    #Retrieve it
-    robj = self.__getitem__(robj_name)
+    robj = robj_name =~ /(.+)::(.+)/ ? self.send('::',$1,$2) : self.__getitem__(robj_name) 
 
     #TODO perhaps this is not neccessary - always call these methods
     #use the [] syntax for variables etc...
@@ -181,9 +181,9 @@ class RSRuby
     if name.length > 1 and name[-1].chr == '_' and name[-2].chr != '_'
       name = name[0..-2]
     end
-    name.gsub!(/__/,'<-')
-    name.gsub!(/_/, '.')
-    return name
+    newname = name.gsub(/__/,'<-')
+    newname = name.gsub(/_/, '.')
+    return newname
   end
 
   #Converts an Array of function arguments into lcall format. If the last 
@@ -299,4 +299,22 @@ class RSRuby
 end
 
 class RException < RuntimeError
+  def initialize(_msg)
+    e = RSRuby.get_default_mode
+    RSRuby.set_default_mode(RSRuby::VECTOR_CONVERSION )
+    if RSRuby.instance.exists('traceback.character')[0]
+      @r_traceback = RSRuby.instance.traceback_character('max.lines'=>10)
+    else
+      r_full_traceback = RSRuby.instance.get(".Traceback")
+      r_shortened_traceback = r_full_traceback.map{|x| x.first(10)}
+      @r_traceback = r_shortened_traceback.flatten
+    end
+    RSRuby.set_default_mode(e)
+    super
+  end
+  def backtrace
+    x = super
+    return x if x.nil?
+    @r_traceback +x
+  end
 end

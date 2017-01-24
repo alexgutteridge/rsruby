@@ -36,6 +36,7 @@
 
 //Converters for Ruby to R
 SEXP ruby_to_R(VALUE val);
+VALUE ruby_to_Robj(VALUE self,VALUE args);
 
 SEXP array_to_R(VALUE obj);
 SEXP hash_to_R(VALUE obj);
@@ -55,10 +56,10 @@ VALUE call_proc(VALUE data);
 VALUE reset_mode(VALUE mode);
 
 VALUE to_ruby_hash(VALUE obj, SEXP names);
-VALUE to_ruby_array(VALUE obj, int *dims, int l);
+VALUE to_ruby_array(VALUE obj, SEXP robj);
 
 VALUE ltranspose(VALUE list, int *dims, int *strides,
-		 int pos, int shift, int len);
+                 int pos, int shift, int len);
 
 //Macros for quick checks
 #define Robj_Check(v) (rb_obj_is_instance_of(v,rb_const_get(rb_cObject,rb_intern("RObj"))))

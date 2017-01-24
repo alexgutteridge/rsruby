@@ -31,14 +31,14 @@
 
 #ifndef R_RUBY_MAIN
 #define R_RUBY_MAIN
-
+#define CSTACK_DEFNS
 #include "ruby.h"
-
 #include "R.h"
 #include "Rdefines.h"
 #include "Rinternals.h"
 #include "Rdefines.h"
-
+#include "Rinterface.h"
+#include "Rembedded.h"
 #include "signal.h"
 
 #include "R_eval.h"
@@ -58,8 +58,6 @@
 
 /* Missing definitions from Rinterface.h or RStartup.h */
 # define CleanEd Rf_CleanEd
-extern int Rf_initEmbeddedR(int argc, char **argv);   
-extern int R_Interactive;
 extern void CleanEd(void);
 extern int R_CollectWarnings; 
 # define PrintWarnings Rf_PrintWarnings
@@ -84,6 +82,6 @@ VALUE RObj_init_lcall(VALUE self, VALUE args);
 VALUE RObj_to_ruby(VALUE self, VALUE args);
 int make_argl(VALUE args, SEXP *e);
 void protect_robj(SEXP robj);
-void Robj_dealloc(VALUE self);
+void Robj_dealloc(SEXP robj);
 #endif
 
