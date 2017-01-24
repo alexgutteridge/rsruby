@@ -36,6 +36,14 @@
 // ************** Converters from Ruby to R *********//
 
 
+VALUE ruby_to_Robj(VALUE self, VALUE args){
+
+  SEXP robj;
+  VALUE  val;
+  robj = ruby_to_R(args);
+  val = to_ruby_with_mode(robj,NO_CONVERSION);
+  return val;
+}
 SEXP ruby_to_R(VALUE obj)
 {
   SEXP robj;
@@ -352,11 +360,11 @@ to_ruby_vector(SEXP robj, VALUE *obj, int mode)
         if(isFactor(robj)) {
           /* Watch for NA's! */
           if(integers[i]==NA_INTEGER)
-            it = rb_str_new2(CHAR(NA_STRING));
+            it = rb_external_str_new_cstr(CHAR(NA_STRING));
           else
             {
               thislevel = CHAR(STRING_ELT(GET_LEVELS(robj), integers[i]-1));
-              if (!(it = rb_str_new2(thislevel)))
+              if (!(it = rb_external_str_new_cstr(thislevel)))
                 return -1;
             }
         }
@@ -380,11 +388,11 @@ to_ruby_vector(SEXP robj, VALUE *obj, int mode)
         break;
       case STRSXP:
         if(STRING_ELT(robj, i)==R_NaString)
-          it = rb_str_new2(CHAR(NA_STRING));
+          it = rb_external_str_new_cstr(CHAR(NA_STRING));
         else
           {
             strings = CHAR(STRING_ELT(robj, i));
-            if (!(it = rb_str_new2(strings)))
+            if (!(it = rb_external_str_new_cstr(strings)))
               return -1;
           }
         break;
@@ -404,8 +412,7 @@ to_ruby_vector(SEXP robj, VALUE *obj, int mode)
 
   dim = GET_DIM(robj);
   if (dim != R_NilValue) {
-    len = GET_LENGTH(dim);
-    *obj = to_ruby_array(tmp, INTEGER(dim), len);
+    *obj = to_ruby_array(tmp, robj);
     return 1;
   }
 
@@ -545,7 +552,7 @@ VALUE from_class_table(SEXP robj)
 
       for (i=0; i<GET_LENGTH(rclass); i++){
 	fun = rb_hash_aref(class_table,
-			   rb_str_new2(CHAR(STRING_ELT(rclass, i))));
+			   rb_external_str_new_cstr(CHAR(STRING_ELT(rclass, i))));
 	if (fun != Qnil){
           break;
 	}
@@ -601,7 +608,7 @@ VALUE to_ruby_hash(VALUE obj, SEXP names)
   for (i=0; i<len; i++) {
     it = rb_ary_entry(obj, i);
     name = CHAR(STRING_ELT(names, i));
-    rb_hash_aset(hash, rb_str_new2(name), it);
+    rb_hash_aset(hash, rb_external_str_new_cstr(name), it);
   }
   
   return hash;
@@ -639,10 +646,24 @@ VALUE ltranspose(VALUE list, int *dims, int *strides,
       
 /* Convert a R Array to a Ruby Array (in the form of
  * array of arrays of ...) */
-VALUE to_ruby_array(VALUE obj, int *dims, int l)
+VALUE to_ruby_array(VALUE obj, SEXP robj)
 {
-  VALUE list;
-  int i, c, *strides;
+  VALUE rarrayComponents[3]; //values, dimnames, dimnamesnames
+  VALUE cRArray;
+  VALUE rarray;
+  SEXP dim;
+  int i, c, *strides,l;
+  int *dims;
+  int status;
+  dim = GET_DIM(robj);
+  dims = INTEGER(dim);
+  l = GET_LENGTH(dim);
+  status = to_ruby_vector(GET_DIMNAMES(robj),&rarrayComponents[1],VECTOR_CONVERSION);
+  if (!status)
+    rb_raise(rb_eRuntimeError,"Could not convert dimnames\n");
+  status = to_ruby_vector(GET_NAMES(GET_DIMNAMES(robj)),&rarrayComponents[2],VECTOR_CONVERSION);
+  if (!status)
+    rb_raise(rb_eRuntimeError,"Could not convert dimnames names\n");
 
   strides = (int *)ALLOC_N(int,l);
   if (!strides)
@@ -654,8 +675,11 @@ VALUE to_ruby_array(VALUE obj, int *dims, int l)
     c *= dims[i];
   }
 
-  list = ltranspose(obj, dims, strides, 0, 0, l);
+  rarrayComponents[0] = ltranspose(obj, dims, strides, 0, 0, l);
   free(strides);
 
-  return list;
+  cRArray  = rb_const_get(rb_cObject,rb_intern("RArray"));
+  rarray = rb_class_new_instance(3,rarrayComponents,cRArray);
+
+  return rarray;
 }

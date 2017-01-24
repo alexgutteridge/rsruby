@@ -37,8 +37,7 @@
 /* This is inspired in $R_SRC/src/main/memory.c */
 static SEXP R_References;
 void protect_robj(SEXP robj){
-  R_References = CONS(robj, R_References);
-  SET_SYMVALUE(install("R.References"), R_References);
+  R_PreserveObject(robj);
 }
 
 SEXP
@@ -55,16 +54,10 @@ RecursiveRelease(SEXP obj, SEXP list)
 
 /* TODO: This needs implementing as a Ruby destructor for each RObj */
 void
-Robj_dealloc(VALUE self)
+Robj_dealloc(SEXP robj)
 {
-  SEXP robj;
-  
-  Data_Get_Struct(self, struct SEXPREC, robj);
-  
-  R_References = RecursiveRelease(robj, R_References);
-  SET_SYMVALUE(install("R.References"), R_References);
-  
-  return;
+  R_ReleaseObject(robj);
+ 
 }
 
 
@@ -124,7 +117,7 @@ VALUE rs_shutdown(VALUE self){
  */
 VALUE rr_init(VALUE self){
 
-
+  
   init_R(0,NULL);
   // Initialize the list of protected objects
   R_References = R_NilValue;
@@ -144,7 +137,11 @@ void init_R(int argc, char **argv){
   if (RSRUBY_R_HOME) {
     setenv("R_HOME", RSRUBY_R_HOME, 0);
   }
-  Rf_initEmbeddedR(sizeof(defaultArgv) / sizeof(defaultArgv[0]), defaultArgv);
+  // Rf_initEmbeddedR(sizeof(defaultArgv) / sizeof(defaultArgv[0]), defaultArgv);
+  Rf_initialize_R(sizeof(defaultArgv) / sizeof(defaultArgv[0]), defaultArgv);
+  R_Interactive = TRUE; 
+  R_CStackLimit = (uintptr_t)-1; //disable stack limit checking
+  setup_Rmainloop();
   R_Interactive = FALSE; //Remove crash menu (and other interactive R features)
 }
              
@@ -170,13 +167,14 @@ void Init_rsruby_c(){
   rb_define_method(cRRuby, "shutdown", rs_shutdown, 0);
 
   rb_define_method(cRRuby, "crash", crash, 0);
+  rb_define_method(cRRuby, "to_R", ruby_to_Robj, 1);
 
   //Add the lcall method to RObj
   cRObj  = rb_const_get(rb_cObject,rb_intern("RObj"));
   rb_define_method(cRObj, "lcall", RObj_lcall, 1);
   rb_define_method(cRObj, "__init_lcall__", RObj_init_lcall, 1);  
   rb_define_method(cRObj, "to_ruby", RObj_to_ruby, -2);
-  rb_define_method(cRObj, "to_R", ruby_to_R, 1);
+
 
 }
 

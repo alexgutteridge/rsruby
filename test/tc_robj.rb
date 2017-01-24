@@ -80,5 +80,8 @@ class TestRObj < Test::Unit::TestCase
     RSRuby.set_default_mode(RSRuby::BASIC_CONVERSION)
     assert_equal(@r.names(arr), ['','a','b','c'])
   end
-
+  def test_initialize
+    robj = RObj.new([1,2,3])
+    assert_equal('RObj',robj.class)
+  end
 end
