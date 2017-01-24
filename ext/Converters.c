@@ -113,7 +113,7 @@ SEXP ruby_to_R(VALUE obj)
       str = rb_funcall(obj,rb_intern("inspect"),0);
       str = rb_funcall(str,rb_intern("slice"),2,INT2NUM(0),INT2NUM(60));
       sprintf(buf,"Unsupported object '%s' passed to R.\n",RSTRING_PTR(str));
-      rb_raise(rb_eArgError,buf);
+      rb_raise(rb_eArgError,"%s",buf);
       PROTECT(robj = NULL);       /* Protected to avoid stack inbalance */
     }
 
