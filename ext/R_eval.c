@@ -59,7 +59,7 @@ SEXP do_eval_expr(SEXP e) {
       rb_raise(rb_eInterrupt,"RSRuby interrupted");
     }
     else {
-      rb_eRException = rb_const_get(rb_cObject, 
+      rb_eRException = rb_const_get(rb_cObject,
 				    rb_intern("RException"));
       rb_raise(rb_eRException, get_last_error_msg());
       return NULL;
@@ -105,7 +105,7 @@ SEXP get_fun_from_name(char *ident) {
     rb_raise(rb_eRuntimeError, "symbol print-name too long");
     return NULL;
   }
-  
+
 #if R_VERSION < 0x20000
   obj = Rf_findVar(Rf_install(ident), R_GlobalEnv);
 #else
@@ -127,7 +127,7 @@ SEXP get_fun_from_name(char *ident) {
   if (obj != R_UnboundValue)
       obj = Rf_findFun(Rf_install(ident), R_GlobalEnv);
 #endif
-  
+
   if (obj == R_UnboundValue) {
     rb_raise(rb_eNoMethodError, "R Function \"%s\" not found", ident);
     return NULL;

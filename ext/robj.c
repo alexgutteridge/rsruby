@@ -136,7 +136,7 @@ make_argl(VALUE args, SEXP *e)
 
   //Ensure we have an array
   args = rb_check_array_type(args);
-  
+
   for (i=0; i<RARRAY_LEN(args); i++) {
     pair = rb_ary_entry(args, i);
     pair = rb_check_array_type(pair);
@@ -146,7 +146,7 @@ make_argl(VALUE args, SEXP *e)
     /* Name must be a string. If it is empty string '' then no name*/
     name = rb_ary_entry(pair, 0);
     name = StringValue(name);
-    name = rb_funcall(rb_const_get(rb_cObject, 
+    name = rb_funcall(rb_const_get(rb_cObject,
 				   rb_intern("RSRuby")),
 		      rb_intern("convert_method_name"),1,name);
 
@@ -158,7 +158,7 @@ make_argl(VALUE args, SEXP *e)
     SETCAR(*e, rvalue);
 
     /* Add name (if present) */
-    if (RSTRING_LEN(name) > 0) 
+    if (RSTRING_LEN(name) > 0)
       {
         SET_TAG(*e, Rf_install(RSTRING_PTR(name)));
       }
