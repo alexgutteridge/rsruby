@@ -298,23 +298,23 @@ class RSRuby
 
 end
 
-class RException < RuntimeError
-  def initialize(_msg)
-    e = RSRuby.get_default_mode
-    RSRuby.set_default_mode(RSRuby::VECTOR_CONVERSION )
-    if RSRuby.instance.exists('traceback.character')[0]
-      @r_traceback = RSRuby.instance.traceback_character('max.lines'=>10)
-    else
-      r_full_traceback = RSRuby.instance.get(".Traceback")
-      r_shortened_traceback = r_full_traceback.map{|x| x.first(10)}
-      @r_traceback = r_shortened_traceback.flatten
-    end
-    RSRuby.set_default_mode(e)
-    super
-  end
-  def backtrace
-    x = super
-    return x if x.nil?
-    @r_traceback +x
-  end
-end
+#class RException < RuntimeError
+#  def initialize(_msg)
+#    e = RSRuby.get_default_mode
+#    RSRuby.set_default_mode(RSRuby::VECTOR_CONVERSION )
+#    if RSRuby.instance.exists('traceback.character')[0]
+#      @r_traceback = RSRuby.instance.traceback_character('max.lines'=>10)
+#    else
+#      r_full_traceback = RSRuby.instance.get(".Traceback")
+#      r_shortened_traceback = r_full_traceback.map{|x| x.first(10)}
+#      @r_traceback = r_shortened_traceback.flatten
+#    end
+#    RSRuby.set_default_mode(e)
+#    super
+#  end
+#  def backtrace
+#    x = super
+#    return x if x.nil?
+#    @r_traceback +x
+#  end
+#end
